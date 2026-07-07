@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="005-create-categoria" author="joao">
+        <createTable tableName="categoria">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nome" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="categoria" baseColumnNames="empresa_id"
+                                  constraintName="fk_categoria_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="005-create-produto" author="joao">
+        <createTable tableName="produto">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nome" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descricao" type="varchar(500)"/>
+            <column name="preco_venda" type="numeric(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preco_custo" type="numeric(12,2)"/>
+            <column name="quantidade_estoque" type="integer"/>
+            <column name="estoque_minimo" type="integer"/>
+            <column name="sku" type="varchar(50)"/>
+            <column name="categoria_id" type="uuid"/>
+            <column name="ativo" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atributos_json" type="jsonb"/>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="produto" baseColumnNames="empresa_id"
+                                  constraintName="fk_produto_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="produto" baseColumnNames="categoria_id"
+                                  constraintName="fk_produto_categoria"
+                                  referencedTableName="categoria" referencedColumnNames="id"
+                                  onDelete="SET NULL"/>
+        <createIndex tableName="produto" indexName="idx_produto_empresa">
+            <column name="empresa_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="005-create-cliente" author="joao">
+        <createTable tableName="cliente">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nome" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="telefone" type="varchar(20)"/>
+            <column name="email" type="varchar(150)"/>
+            <column name="cpf_cnpj" type="varchar(20)"/>
+            <column name="observacoes" type="varchar(500)"/>
+            <column name="atributos_json" type="jsonb"/>
+            <column name="ativo" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="cliente" baseColumnNames="empresa_id"
+                                  constraintName="fk_cliente_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+        <createIndex tableName="cliente" indexName="idx_cliente_empresa">
+            <column name="empresa_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

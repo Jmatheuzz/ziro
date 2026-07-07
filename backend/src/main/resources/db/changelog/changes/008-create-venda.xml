@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="008-create-venda" author="joao">
+        <createTable tableName="venda">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cliente_id" type="uuid"/>
+            <column name="data_venda" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="forma_pagamento" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valor_total" type="numeric(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="desconto" type="numeric(12,2)" defaultValueNumeric="0"/>
+            <column name="observacoes" type="varchar(500)"/>
+            <column name="conta_receber_id" type="uuid"/>
+            <column name="movimentacao_caixa_id" type="uuid"/>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="venda" baseColumnNames="empresa_id"
+                                  constraintName="fk_venda_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="venda" baseColumnNames="cliente_id"
+                                  constraintName="fk_venda_cliente"
+                                  referencedTableName="cliente" referencedColumnNames="id"
+                                  onDelete="SET NULL"/>
+        <addForeignKeyConstraint baseTableName="venda" baseColumnNames="conta_receber_id"
+                                  constraintName="fk_venda_conta_receber"
+                                  referencedTableName="conta_receber" referencedColumnNames="id"
+                                  onDelete="SET NULL"/>
+        <addForeignKeyConstraint baseTableName="venda" baseColumnNames="movimentacao_caixa_id"
+                                  constraintName="fk_venda_movimentacao_caixa"
+                                  referencedTableName="movimentacao_caixa" referencedColumnNames="id"
+                                  onDelete="SET NULL"/>
+
+        <createIndex tableName="venda" indexName="idx_venda_empresa_data">
+            <column name="empresa_id"/>
+            <column name="data_venda" descending="true"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="008-create-item-venda" author="joao">
+        <createTable tableName="item_venda">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="venda_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="produto_id" type="uuid"/>
+            <column name="nome_produto" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantidade" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preco_unitario" type="numeric(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subtotal" type="numeric(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="item_venda" baseColumnNames="empresa_id"
+                                  constraintName="fk_item_venda_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="item_venda" baseColumnNames="venda_id"
+                                  constraintName="fk_item_venda_venda"
+                                  referencedTableName="venda" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="item_venda" baseColumnNames="produto_id"
+                                  constraintName="fk_item_venda_produto"
+                                  referencedTableName="produto" referencedColumnNames="id"
+                                  onDelete="SET NULL"/>
+
+        <createIndex tableName="item_venda" indexName="idx_item_venda_venda">
+            <column name="venda_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

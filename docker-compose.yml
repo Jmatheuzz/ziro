@@ -1,0 +1,84 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ziro-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ziro}
+      POSTGRES_USER: ${DB_USER:-ziro}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ziro}
+    ports:
+      - "${DB_PORT_EXPOSED:-5432}:5432"
+    volumes:
+      - ziro_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ziro} -d ${DB_NAME:-ziro}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ziro-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ziro-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-ziro}
+      DB_USER: ${DB_USER:-ziro}
+      DB_PASSWORD: ${DB_PASSWORD:-ziro}
+      JWT_SECRET: ${JWT_SECRET:?defina um JWT_SECRET forte no .env}
+      JWT_ACCESS_EXP_MIN: ${JWT_ACCESS_EXP_MIN:-15}
+      JWT_REFRESH_EXP_DIAS: ${JWT_REFRESH_EXP_DIAS:-7}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost,http://localhost:5173}
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${BACKEND_PORT_EXPOSED:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ziro-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    container_name: ziro-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT_EXPOSED:-80}:80"
+    depends_on:
+      - backend
+    networks:
+      - ziro-network
+
+  # Interface web leve pra inspecionar o Postgres em dev, sem precisar instalar cliente.
+  adminer:
+    image: adminer:4
+    container_name: ziro-adminer
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT_EXPOSED:-8081}:8080"
+    depends_on:
+      - postgres
+    networks:
+      - ziro-network
+
+networks:
+  ziro-network:
+    driver: bridge
+
+volumes:
+  ziro_postgres_data:

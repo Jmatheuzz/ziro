@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="007-create-registro-auditoria" author="joao">
+        <createTable tableName="registro_auditoria">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usuario_id" type="uuid"/>
+            <column name="usuario_nome" type="varchar(150)"/>
+            <column name="entidade" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entidade_id" type="uuid"/>
+            <column name="acao" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descricao" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="registro_auditoria" baseColumnNames="empresa_id"
+                                  constraintName="fk_auditoria_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="registro_auditoria" baseColumnNames="usuario_id"
+                                  constraintName="fk_auditoria_usuario"
+                                  referencedTableName="usuario" referencedColumnNames="id"
+                                  onDelete="SET NULL"/>
+
+        <createIndex tableName="registro_auditoria" indexName="idx_auditoria_empresa_criado_em">
+            <column name="empresa_id"/>
+            <column name="criado_em" descending="true"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

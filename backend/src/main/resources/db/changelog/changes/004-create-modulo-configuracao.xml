@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="004-create-modulo-configuracao" author="joao">
+        <createTable tableName="modulo_configuracao">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modulo" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ativo" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="configuracao_json" type="jsonb"/>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="modulo_configuracao" baseColumnNames="empresa_id"
+                                  constraintName="fk_modulo_config_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+
+        <addUniqueConstraint tableName="modulo_configuracao"
+                              columnNames="empresa_id, modulo"
+                              constraintName="uk_modulo_configuracao_empresa_modulo"/>
+    </changeSet>
+
+</databaseChangeLog>

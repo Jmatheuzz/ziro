@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="006-create-conta-pagar" author="joao">
+        <createTable tableName="conta_pagar">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descricao" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valor" type="numeric(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_vencimento" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_pagamento" type="date"/>
+            <column name="fornecedor" type="varchar(100)"/>
+            <column name="categoria" type="varchar(50)"/>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="conta_pagar" baseColumnNames="empresa_id"
+                                  constraintName="fk_conta_pagar_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="006-create-conta-receber" author="joao">
+        <createTable tableName="conta_receber">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descricao" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valor" type="numeric(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_vencimento" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_recebimento" type="date"/>
+            <column name="cliente_id" type="uuid"/>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="conta_receber" baseColumnNames="empresa_id"
+                                  constraintName="fk_conta_receber_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="conta_receber" baseColumnNames="cliente_id"
+                                  constraintName="fk_conta_receber_cliente"
+                                  referencedTableName="cliente" referencedColumnNames="id"
+                                  onDelete="SET NULL"/>
+    </changeSet>
+
+    <changeSet id="006-create-movimentacao-caixa" author="joao">
+        <createTable tableName="movimentacao_caixa">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="empresa_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valor" type="numeric(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descricao" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="origem" type="varchar(50)"/>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="movimentacao_caixa" baseColumnNames="empresa_id"
+                                  constraintName="fk_movimentacao_caixa_empresa"
+                                  referencedTableName="empresa" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+        <createIndex tableName="movimentacao_caixa" indexName="idx_movimentacao_empresa_data">
+            <column name="empresa_id"/>
+            <column name="data"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

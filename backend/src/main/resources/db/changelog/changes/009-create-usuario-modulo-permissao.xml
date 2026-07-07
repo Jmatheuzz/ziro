@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="009-create-usuario-modulo-permissao" author="joao">
+        <createTable tableName="usuario_modulo_permissao">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="usuario_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modulo" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="criado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="atualizado_em" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="usuario_modulo_permissao" baseColumnNames="usuario_id"
+                                  constraintName="fk_usuario_modulo_permissao_usuario"
+                                  referencedTableName="usuario" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+
+        <addUniqueConstraint tableName="usuario_modulo_permissao"
+                              columnNames="usuario_id, modulo"
+                              constraintName="uk_usuario_modulo_permissao"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+  }
+
+  /* foco de teclado visivel e consistente em qualquer elemento interativo */
+  :focus-visible {
+    outline: 2px solid theme("colors.brass.DEFAULT");
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .transition-standard {
+    transition: all 0.15s ease;
+  }
+}
+
+@keyframes desenhar-traco {
+  from {
+    stroke-dashoffset: var(--comprimento-traco);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes respirar {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.ziro-mark-traco {
+  stroke-dasharray: var(--comprimento-traco);
+  animation: desenhar-traco 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards,
+    respirar 3.5s ease-in-out 1.6s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ziro-mark-traco {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
