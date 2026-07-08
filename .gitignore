@@ -1,3 +1,4 @@
 .env
 .env.prod
 *.pem
+backend/target/*

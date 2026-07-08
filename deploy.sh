@@ -20,7 +20,7 @@ set -euo pipefail
 
 # ── configuração (edite aqui ou exporte antes de rodar) ──────────────────────
 EC2_HOST="${EC2_HOST:-}"
-EC2_USER="${EC2_USER:-ec2-user}"
+EC2_USER="${EC2_USER:-ubuntu}"
 EC2_KEY="${EC2_KEY:-${HOME}/.ssh/ziro.pem}"
 REPO_URL="${REPO_URL:-}"
 REPO_BRANCH="${REPO_BRANCH:-main}"
@@ -39,8 +39,8 @@ die()  { echo -e "${RED}[✗]${NC} $*" >&2; exit 1; }
 [[ ! -f "$EC2_KEY" ]] && die "Chave SSH não encontrada: $EC2_KEY"
 [[ ! -f "$ENV_FILE" ]] && die ".env não encontrado: $ENV_FILE  (copie .env.example e configure)"
 
-SSH_OPTS="-i ${EC2_KEY} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
-remote() { ssh $SSH_OPTS "${EC2_USER}@${EC2_HOST}" "$@"; }
+SSH_OPTS=(-i "${EC2_KEY}" -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15)
+remote() { ssh "${SSH_OPTS[@]}" "${EC2_USER}@${EC2_HOST}" "$@"; }
 
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -126,7 +126,7 @@ ok "Código atualizado"
 
 # ── envia .env ────────────────────────────────────────────────────────────────
 log "Enviando .env..."
-scp $SSH_OPTS "$ENV_FILE" "${EC2_USER}@${EC2_HOST}:${APP_DIR}/.env"
+scp "${SSH_OPTS[@]}" "$ENV_FILE" "${EC2_USER}@${EC2_HOST}:${APP_DIR}/.env"
 ok ".env enviado"
 
 # ── sobe os containers ────────────────────────────────────────────────────────
